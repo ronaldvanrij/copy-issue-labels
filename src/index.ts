@@ -35,13 +35,19 @@ async function run() {
     return
   }
 
+  core.info('Issue specified')
+
   const client = github.getOctokit(token)
+
+  core.info('Got Oktokit')
 
   const { data: issueData } = await client.issues.get({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     issue_number: issueNumber,
   })
+
+  core.info('Got issuedata')
 
   const referenceRegExp = createReferenceRegExp(customKeywords)
 
