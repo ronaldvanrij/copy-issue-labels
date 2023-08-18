@@ -1,6 +1,11 @@
 
 
-export function getLinkedIssues({ octokit, prNumber, repoOwner, repoName }) {
+export function getLinkedIssues(
+    octokit: any, 
+    prNumber: number, 
+    repoOwner: string, 
+    repoName: string
+) {
     return octokit.graphql(
       `
       query getLinkedIssues($owner: String!, $name: String!, $number: Int!) {
@@ -29,23 +34,18 @@ export function getLinkedIssues({ octokit, prNumber, repoOwner, repoName }) {
   }
   
 
-export function parseLinkedIssues({ octokit, prNumber, repoOwner, repoName }) {
+export function parseLinkedIssues(
+    octokit: any, 
+    prNumber: number, 
+    repoOwner: string, 
+    repoName: string
+) {
 
-    const data = await getLinkedIssues({
-        prNumber: prNumber,
-        repoName: repoName,
-        repoOwner: repoOwner,
-        octokit,
-    });
-
-    core.debug(`
-    *** GRAPHQL DATA ***
-    ${format(data)}
-    `);
+    const data = getLinkedIssues(octokit, prNumber, repoName, repoOwner);
 
     const pullRequest = data?.repository?.pullRequest;
     const linkedIssuesCount = pullRequest?.closingIssuesReferences?.totalCount;
     return (pullRequest?.closingIssuesReferences?.nodes || []).map(
-        (node) => `${node.number}`
+        (node: any) => `${node.number}`
     );
 }

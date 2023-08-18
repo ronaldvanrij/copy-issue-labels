@@ -5,6 +5,9 @@ import {
   parseReferencedIssues,
   uniq,
 } from './issue-parser'
+import {
+  parseLinkedIssues
+} from './link-parser'
 
 function getInputAsArray(name: string, options?: core.InputOptions): string[] {
   return core
