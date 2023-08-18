@@ -45,7 +45,7 @@ export function parseLinkedIssues(
 
     core.debug(`
     *** GRAPHQL DATA ***
-    ${format(data)}
+    ${data}
     `);
 
     const pullRequest = data?.repository?.pullRequest;
