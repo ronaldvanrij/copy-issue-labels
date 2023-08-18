@@ -66,19 +66,16 @@ function run() {
             core.setFailed('No issue specified');
             return;
         }
-        core.info('Issue specified: ' + issueNumber);
         const client = github.getOctokit(token);
         const { data: issueData } = yield client.issues.get({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
             issue_number: issueNumber,
         });
-        core.info('Got pullrequest');
         const referenceRegExp = issue_parser_1.createReferenceRegExp(customKeywords);
         const connectedIssuesFromBody = issue_parser_1.parseReferencedIssues((_a = issueData.body) !== null && _a !== void 0 ? _a : '', referenceRegExp);
         const connectedIssuesFromTitle = fromTitle ? issue_parser_1.parseReferencedIssues((_b = issueData.title) !== null && _b !== void 0 ? _b : '', referenceRegExp) : [];
         const linkedIssues = yield link_parser_1.parseLinkedIssues(client, issueNumber, github.context.repo.owner, github.context.repo.repo);
-        core.info(linkedIssues);
         // the same issue may come from both title and body. we should use uniq to dedupe them.
         const connectedIssues = issue_parser_1.uniq([...connectedIssuesFromBody, ...connectedIssuesFromTitle, ...linkedIssues]);
         const connectedLabelsResponses = yield Promise.all(connectedIssues.map((connectedIssue) => __awaiter(this, void 0, void 0, function* () {
@@ -92,7 +89,6 @@ function run() {
             const issueLabels = response.data.map((label) => label.name);
             return [...acc, ...issueLabels];
         }, []));
-        core.info(labels.join(", "));
         labels.length > 0 && (yield client.issues.addLabels({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
