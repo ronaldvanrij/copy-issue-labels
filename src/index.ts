@@ -38,11 +38,9 @@ async function run() {
     return
   }
 
-  core.info('Issue specified')
+  core.info('Issue specified: ' + issueNumber)
 
   const client = github.getOctokit(token)
-
-  core.info('Got Oktokit')
 
   const { data: issueData } = await client.issues.get({
     owner: github.context.repo.owner,
@@ -50,7 +48,7 @@ async function run() {
     issue_number: issueNumber,
   })
 
-  core.info('Got issuedata')
+  core.info('Got pullrequest')
 
   const referenceRegExp = createReferenceRegExp(customKeywords)
 
@@ -65,6 +63,9 @@ async function run() {
   ) : []
 
   const linkedIssues = parseLinkedIssues(client, issueNumber, github.context.repo.owner, github.context.repo.repo)
+
+  core.info(linkedIssues)
+
 
   // the same issue may come from both title and body. we should use uniq to dedupe them.
   const connectedIssues = uniq([...connectedIssuesFromBody, ...connectedIssuesFromTitle, ...linkedIssues])
@@ -85,6 +86,8 @@ async function run() {
       return [...acc, ...issueLabels]
     }, [])
   )
+  
+    core.info(labels.join(", "))
 
   labels.length > 0 && await client.issues.addLabels({
     owner: github.context.repo.owner,
