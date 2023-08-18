@@ -62,7 +62,7 @@ async function run() {
     referenceRegExp
   ) : []
 
-  const linkedIssues = parseLinkedIssues(client, issueNumber, github.context.repo.owner, github.context.repo.repo)
+  const linkedIssues = await parseLinkedIssues(client, issueNumber, github.context.repo.owner, github.context.repo.repo)
 
   core.info(linkedIssues)
 

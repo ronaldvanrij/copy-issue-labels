@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 
-export function getLinkedIssues(
+export async function getLinkedIssues(
     octokit: any, 
     prNumber: number, 
     repoOwner: string, 
@@ -34,18 +34,18 @@ export function getLinkedIssues(
   }
   
 
-export function parseLinkedIssues(
+export async function parseLinkedIssues(
     octokit: any, 
     prNumber: number, 
     repoOwner: string, 
     repoName: string
 ) {
 
-    const data = getLinkedIssues(octokit, prNumber, repoOwner, repoName);
+    const data = await getLinkedIssues(octokit, prNumber, repoOwner, repoName);
 
     core.debug(`
     *** GRAPHQL DATA ***
-    ${data}
+    ${JSON.stringify(data, undefined, 2)}
     `);
 
     const pullRequest = data?.repository?.pullRequest;

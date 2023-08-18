@@ -77,7 +77,7 @@ function run() {
         const referenceRegExp = issue_parser_1.createReferenceRegExp(customKeywords);
         const connectedIssuesFromBody = issue_parser_1.parseReferencedIssues((_a = issueData.body) !== null && _a !== void 0 ? _a : '', referenceRegExp);
         const connectedIssuesFromTitle = fromTitle ? issue_parser_1.parseReferencedIssues((_b = issueData.title) !== null && _b !== void 0 ? _b : '', referenceRegExp) : [];
-        const linkedIssues = link_parser_1.parseLinkedIssues(client, issueNumber, github.context.repo.owner, github.context.repo.repo);
+        const linkedIssues = yield link_parser_1.parseLinkedIssues(client, issueNumber, github.context.repo.owner, github.context.repo.repo);
         core.info(linkedIssues);
         // the same issue may come from both title and body. we should use uniq to dedupe them.
         const connectedIssues = issue_parser_1.uniq([...connectedIssuesFromBody, ...connectedIssuesFromTitle, ...linkedIssues]);
@@ -176,11 +176,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.parseLinkedIssues = exports.getLinkedIssues = void 0;
 const core = __importStar(__webpack_require__(2186));
 function getLinkedIssues(octokit, prNumber, repoOwner, repoName) {
-    return octokit.graphql(`
+    return __awaiter(this, void 0, void 0, function* () {
+        return octokit.graphql(`
       query getLinkedIssues($owner: String!, $name: String!, $number: Int!) {
         repository(owner: $owner, name: $name) {
           pullRequest(number: $number) {
@@ -198,22 +208,25 @@ function getLinkedIssues(octokit, prNumber, repoOwner, repoName) {
         }
       }
       `, {
-        owner: repoOwner,
-        name: repoName,
-        number: prNumber,
+            owner: repoOwner,
+            name: repoName,
+            number: prNumber,
+        });
     });
 }
 exports.getLinkedIssues = getLinkedIssues;
 function parseLinkedIssues(octokit, prNumber, repoOwner, repoName) {
     var _a, _b, _c;
-    const data = getLinkedIssues(octokit, prNumber, repoOwner, repoName);
-    core.debug(`
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = yield getLinkedIssues(octokit, prNumber, repoOwner, repoName);
+        core.debug(`
     *** GRAPHQL DATA ***
-    ${data}
+    ${JSON.stringify(data, undefined, 2)}
     `);
-    const pullRequest = (_a = data === null || data === void 0 ? void 0 : data.repository) === null || _a === void 0 ? void 0 : _a.pullRequest;
-    const linkedIssuesCount = (_b = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.closingIssuesReferences) === null || _b === void 0 ? void 0 : _b.totalCount;
-    return (((_c = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.closingIssuesReferences) === null || _c === void 0 ? void 0 : _c.nodes) || []).map((node) => `${node.number}`);
+        const pullRequest = (_a = data === null || data === void 0 ? void 0 : data.repository) === null || _a === void 0 ? void 0 : _a.pullRequest;
+        const linkedIssuesCount = (_b = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.closingIssuesReferences) === null || _b === void 0 ? void 0 : _b.totalCount;
+        return (((_c = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.closingIssuesReferences) === null || _c === void 0 ? void 0 : _c.nodes) || []).map((node) => `${node.number}`);
+    });
 }
 exports.parseLinkedIssues = parseLinkedIssues;
 
