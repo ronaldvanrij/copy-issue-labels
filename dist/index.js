@@ -185,7 +185,7 @@ function getLinkedIssues(octokit, prNumber, repoOwner, repoName) {
 exports.getLinkedIssues = getLinkedIssues;
 function parseLinkedIssues(octokit, prNumber, repoOwner, repoName) {
     var _a, _b, _c;
-    const data = getLinkedIssues(octokit, prNumber, repoName, repoOwner);
+    const data = getLinkedIssues(octokit, prNumber, repoOwner, repoName);
     const pullRequest = (_a = data === null || data === void 0 ? void 0 : data.repository) === null || _a === void 0 ? void 0 : _a.pullRequest;
     const linkedIssuesCount = (_b = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.closingIssuesReferences) === null || _b === void 0 ? void 0 : _b.totalCount;
     return (((_c = pullRequest === null || pullRequest === void 0 ? void 0 : pullRequest.closingIssuesReferences) === null || _c === void 0 ? void 0 : _c.nodes) || []).map((node) => `${node.number}`);

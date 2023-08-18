@@ -41,7 +41,7 @@ export function parseLinkedIssues(
     repoName: string
 ) {
 
-    const data = getLinkedIssues(octokit, prNumber, repoName, repoOwner);
+    const data = getLinkedIssues(octokit, prNumber, repoOwner, repoName);
 
     const pullRequest = data?.repository?.pullRequest;
     const linkedIssuesCount = pullRequest?.closingIssuesReferences?.totalCount;
