@@ -1,4 +1,4 @@
-
+import * as core from '@actions/core'
 
 export function getLinkedIssues(
     octokit: any, 
@@ -43,9 +43,16 @@ export function parseLinkedIssues(
 
     const data = getLinkedIssues(octokit, prNumber, repoOwner, repoName);
 
+    core.debug(`
+    *** GRAPHQL DATA ***
+    ${format(data)}
+    `);
+
     const pullRequest = data?.repository?.pullRequest;
     const linkedIssuesCount = pullRequest?.closingIssuesReferences?.totalCount;
     return (pullRequest?.closingIssuesReferences?.nodes || []).map(
         (node: any) => `${node.number}`
     );
 }
+
+
